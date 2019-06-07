@@ -13,9 +13,12 @@ import (
 
 func newStartCommand() *cobra.Command {
 	var (
-		path   string
-		prefix string
-		node   string
+		path        string
+		prefix      string
+		node        string
+		deciderPath string
+		min         int
+		sentMin     float32
 	)
 
 	var start = &cobra.Command{
@@ -46,8 +49,8 @@ func newStartCommand() *cobra.Command {
 			services := []services.Service{
 				gecko,
 				addressBook,
-				services.NewTransferWatch(twitterBot, gt, gecko, addressBook, 0),
-				services.NewSentiment(twitterBot),
+				services.NewTransferWatch(twitterBot, gt, gecko, addressBook, min),
+				services.NewSentiment(twitterBot, sentMin),
 			}
 
 			for _, serv := range services {
@@ -61,5 +64,8 @@ func newStartCommand() *cobra.Command {
 	start.PersistentFlags().StringVar(&path, "keys", "", "path to twitter.yml file containing API keys if not in current dir (e.g. path/to/my/file/)")
 	start.PersistentFlags().StringVar(&node, "node", "http://127.0.0.1:8732", "url to tezos node (e.g. http://127.0.0.1:8732)")
 	start.PersistentFlags().StringVar(&prefix, "prefix", "", "prefix to all tweets (e.g. DefinitelyNotABot: -- will read DefinitelyNotABot: my tweet)")
+	start.PersistentFlags().StringVar(&deciderPath, "decider", "./decider.json", "decider file to enable features (e.g. ./decider.json)")
+	start.PersistentFlags().IntVar(&min, "transfer-min", 50000, "minimum threshold for transfers (e.g. 5000)")
+	start.PersistentFlags().Float32Var(&sentMin, "sentiment-min", .30, "minimum threshold for sentiment (e.g. .30)")
 	return start
 }

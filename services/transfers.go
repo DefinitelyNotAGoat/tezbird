@@ -13,11 +13,11 @@ import (
 
 // TransferWatch is a structure to contain the service that watches for transfers
 type TransferWatch struct {
+	min        int
 	twitterBot *twitter.Bot
 	gt         *gotezos.GoTezos
 	gecko      *CoinGecko
 	addrBook   *AddressBook
-	min        int //MUTEZ
 }
 
 // NewTransferWatch returns a TransferWatch
@@ -63,7 +63,7 @@ func (tw *TransferWatch) watchTransfers(errch chan error) {
 									src := tw.addrBook.Lookup(op.Source)
 									dst := tw.addrBook.Lookup(op.Destination)
 
-									tweet := fmt.Sprintf("[Transfer Alert] %s sent %s XTZ ($%s) to %s: http://tzscan.io/%s", src, humanize.Commaf(f), humanize.Commaf(value), dst, opin.Hash)
+									tweet := fmt.Sprintf("[Transfer Alert] %s sent %s XTZ ($%s) to %s: http://tzscan.io/%s #tezos", src, humanize.Commaf(f), humanize.Commaf(value), dst, opin.Hash)
 									fmt.Println(tweet)
 									err := tw.twitterBot.Tweet(tweet)
 									if err != nil {
@@ -75,6 +75,7 @@ func (tw *TransferWatch) watchTransfers(errch chan error) {
 						}
 					}
 				}
+
 			}
 		}
 	}()

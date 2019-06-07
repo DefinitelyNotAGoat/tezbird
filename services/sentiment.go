@@ -12,12 +12,13 @@ import (
 
 // Sentiment is a sentimental analysis service for tezos twitter
 type Sentiment struct {
+	min        float32
 	twitterBot *twitter.Bot
 }
 
 // NewSentiment returns a new Sentiment
-func NewSentiment(twitterBot *twitter.Bot) *Sentiment {
-	return &Sentiment{twitterBot: twitterBot}
+func NewSentiment(twitterBot *twitter.Bot, min float32) *Sentiment {
+	return &Sentiment{twitterBot: twitterBot, min: min}
 }
 
 // Start starts a new sentiment service
@@ -60,7 +61,7 @@ func (s *Sentiment) analyze(errch chan error) {
 				if err != nil {
 					errch <- errors.Wrap(err, "could not eval sentiment")
 				} else {
-					if result[0] < .3 && tweet.User.IDStr != s.twitterBot.UserID { //positive sentiment
+					if result[0] < s.min && tweet.User.IDStr != s.twitterBot.UserID { //positive sentiment
 						s.twitterBot.Retweet(tweet.ID, nil)
 					}
 				}
