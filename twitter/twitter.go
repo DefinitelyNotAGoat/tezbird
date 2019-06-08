@@ -59,6 +59,7 @@ func (bot *Bot) Tweet(twt string) error {
 	if !bot.isset {
 		bot.UserID = rtn.User.IDStr
 	}
+	fmt.Println("Tweeted:" + twt)
 
 	return nil
 }
@@ -69,7 +70,18 @@ func (bot *Bot) Retweet(id int64, params *twitter.StatusRetweetParams) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("successful retweet %d\n", tweet.ID)
+	fmt.Println("Retweeted: " + tweet.Text)
+
+	return nil
+}
+
+// Like favorites a tweet at id
+func (bot *Bot) Like(id int64) error {
+	tweet, _, err := bot.session.Favorites.Create(&twitter.FavoriteCreateParams{ID: id})
+	if err != nil {
+		return err
+	}
+	fmt.Println("Favorited: " + tweet.Text)
 
 	return nil
 }

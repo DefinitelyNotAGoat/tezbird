@@ -72,24 +72,27 @@ func (c *CoinGecko) watchPrice(errch chan error) {
 	req.URL.RawQuery = q.Encode()
 
 	go func() {
-		ticker := time.NewTicker(1 * time.Second)
+		ticker := time.NewTicker(1 * time.Minute)
 		for {
 			select {
 			case <-ticker.C:
 				resp, err := client.Do(req)
 				if err != nil {
 					errch <- err
+					continue
 				}
 
 				bytes, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
 					errch <- err
+					continue
 				}
 
 				var s Simple
 				s, err = s.unmarshalJSON(bytes)
 				if err != nil {
 					errch <- err
+					continue
 				}
 				c.mu.Lock()
 				c.price = s.Tezos.USD

@@ -12,13 +12,14 @@ import (
 
 // Sentiment is a sentimental analysis service for tezos twitter
 type Sentiment struct {
-	min        float32
-	twitterBot *twitter.Bot
+	minScoreRetweet  float32
+	minScoreFavorite float32
+	twitterBot       *twitter.Bot
 }
 
 // NewSentiment returns a new Sentiment
-func NewSentiment(twitterBot *twitter.Bot, min float32) *Sentiment {
-	return &Sentiment{twitterBot: twitterBot, min: min}
+func NewSentiment(twitterBot *twitter.Bot, minRetweet, minScoreFavorite float32) *Sentiment {
+	return &Sentiment{twitterBot: twitterBot, minScoreRetweet: minRetweet, minScoreFavorite: minScoreFavorite}
 }
 
 // Start starts a new sentiment service
@@ -48,6 +49,7 @@ func (s *Sentiment) analyze(errch chan error) {
 		})
 		if err != nil {
 			errch <- err
+			return
 		}
 
 		session, _ := sentiment.OpenSession()
@@ -61,9 +63,16 @@ func (s *Sentiment) analyze(errch chan error) {
 				if err != nil {
 					errch <- errors.Wrap(err, "could not eval sentiment")
 				} else {
-					if result[0] < s.min && tweet.User.IDStr != s.twitterBot.UserID { //positive sentiment
+					if containsBlockReference(tweet.Text) {
+						return
+					}
+					if result[0] <= s.minScoreFavorite && tweet.User.IDStr != s.twitterBot.UserID {
+						s.twitterBot.Like(tweet.ID)
+					}
+					if result[0] <= s.minScoreRetweet && tweet.User.IDStr != s.twitterBot.UserID { //positive sentiment
 						s.twitterBot.Retweet(tweet.ID, nil)
 					}
+
 				}
 			}
 		}
@@ -80,6 +89,14 @@ func containsTezosReference(msg string) bool {
 		strings.Contains(msg, "kathleen brietman") ||
 		strings.Contains(msg, "Arthur Brietman") ||
 		strings.Contains(msg, "Kathleen Brietman") {
+		return true
+	} else {
+		return false
+	}
+}
+
+func containsBlockReference(msg string) bool {
+	if strings.Contains(msg, "Magnum") {
 		return true
 	} else {
 		return false

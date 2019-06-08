@@ -49,6 +49,7 @@ func (tw *TransferWatch) watchTransfers(errch chan error) {
 				block, err := tw.gt.Block.GetHead()
 				if err != nil {
 					errch <- err
+					continue
 				}
 
 				for _, opout := range block.Operations {
