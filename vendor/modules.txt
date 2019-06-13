@@ -1,5 +1,9 @@
 # github.com/DefinitelyNotAGoat/go-tezos v1.0.8
 github.com/DefinitelyNotAGoat/go-tezos
+# github.com/DefinitelyNotAGoat/littlebird v0.0.0-20190613010704-41605b91f143
+github.com/DefinitelyNotAGoat/littlebird/config
+github.com/DefinitelyNotAGoat/littlebird/services
+github.com/DefinitelyNotAGoat/littlebird/twitter
 # github.com/Messer4/base58check v0.0.0-20180328134002-7531a92ae9ba
 github.com/Messer4/base58check
 # github.com/cenkalti/backoff v2.1.1+incompatible
@@ -52,7 +56,7 @@ github.com/spf13/pflag
 github.com/spf13/viper
 # github.com/tensorflow/tensorflow v1.13.1
 github.com/tensorflow/tensorflow/tensorflow/go
-# golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734
+# golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/nacl/secretbox

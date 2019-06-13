@@ -5,20 +5,21 @@ import (
 	"os"
 
 	gotezos "github.com/DefinitelyNotAGoat/go-tezos"
+	"github.com/DefinitelyNotAGoat/littlebird/config"
+	lbs "github.com/DefinitelyNotAGoat/littlebird/services"
+	"github.com/DefinitelyNotAGoat/littlebird/twitter"
 	"github.com/DefinitelyNotAGoat/tezbird/services"
-	"github.com/DefinitelyNotAGoat/tezbird/twitter"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 func newStartCommand() *cobra.Command {
 	var (
-		path        string
-		prefix      string
-		node        string
-		min         int
-		retweetMin  float32
-		favoriteMin float32
+		path       string
+		prefix     string
+		node       string
+		min        int
+		configpath string
 	)
 
 	var start = &cobra.Command{
@@ -38,9 +39,16 @@ func newStartCommand() *cobra.Command {
 				os.Exit(1)
 			}
 
+			conf, err := config.NewLiveConfig(configpath)
+			if err != nil {
+				fmt.Println(errors.Wrap(err, "unable to load sentiment config").Error())
+				os.Exit(1)
+			}
+
 			gecko := services.NewCoinGecko()
 			addressBook := services.NewAddressBook()
 			twitterBot, err := twitter.NewTwitterSession(path, prefix)
+
 			if err != nil {
 				fmt.Println(errors.Wrap(err, "could not start twitter client").Error())
 				os.Exit(1)
@@ -50,7 +58,7 @@ func newStartCommand() *cobra.Command {
 				gecko,
 				addressBook,
 				services.NewTransferWatch(twitterBot, gt, gecko, addressBook, min),
-				services.NewSentiment(twitterBot, retweetMin, favoriteMin),
+				lbs.NewSentiment(twitterBot, conf),
 				services.NewVote(twitterBot, gt, addressBook),
 			}
 
@@ -62,12 +70,11 @@ func newStartCommand() *cobra.Command {
 		},
 	}
 
+	start.PersistentFlags().StringVar(&configpath, "config", "", "path to config.json file containing tezos key words to use and other relavent info (e.g. path/to/my/file/)")
 	start.PersistentFlags().StringVar(&path, "keys", "", "path to twitter.yml file containing API keys if not in current dir (e.g. path/to/my/file/)")
 	start.PersistentFlags().StringVar(&node, "node", "http://127.0.0.1:8732", "url to tezos node (e.g. http://127.0.0.1:8732)")
 	start.PersistentFlags().StringVar(&prefix, "prefix", "", "prefix to all tweets (e.g. DefinitelyNotABot: -- will read DefinitelyNotABot: my tweet)")
 	start.PersistentFlags().IntVar(&min, "transfer-min", 50000, "minimum threshold for transfers (e.g. 5000)")
-	start.PersistentFlags().Float32Var(&retweetMin, "retweet-min", .30, "minimum threshold for sentiment (e.g. .30)")
-	start.PersistentFlags().Float32Var(&favoriteMin, "favorite-min", .45, "minimum threshold for sentiment (e.g. .45)")
 
 	return start
 }

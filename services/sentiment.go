@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/DefinitelyNotAGoat/tezbird/twitter"
+	"github.com/DefinitelyNotAGoat/littlebird/twitter"
 	tapi "github.com/dghubble/go-twitter/twitter"
 	"github.com/pkg/errors"
 	sentiment "gopkg.in/vmarkovtsev/BiDiSentiment.v1"

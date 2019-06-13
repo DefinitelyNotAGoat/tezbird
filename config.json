@@ -1,0 +1,14 @@
+{
+    "retweet_sentiment_requirement": 0.15,
+	"favorite_sentiment_requirement": 0.30,
+    "tracked_words": [
+        "tezos",
+        "Tezos",
+        "xtz",
+        "XTZ"
+    ],
+	"exclude_words": [
+        "magnum"
+    ],
+	"limit_tags": 0.20
+}

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	gotezos "github.com/DefinitelyNotAGoat/go-tezos"
-	"github.com/DefinitelyNotAGoat/tezbird/twitter"
+	"github.com/DefinitelyNotAGoat/littlebird/twitter"
 	humanize "github.com/dustin/go-humanize"
 )
 

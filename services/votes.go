@@ -6,7 +6,7 @@ import (
 	"time"
 
 	gotezos "github.com/DefinitelyNotAGoat/go-tezos"
-	"github.com/DefinitelyNotAGoat/tezbird/twitter"
+	"github.com/DefinitelyNotAGoat/littlebird/twitter"
 )
 
 type Vote struct {
